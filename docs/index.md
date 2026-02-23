@@ -4,8 +4,8 @@ layout: home
 
 hero:
   name: "Azimuth Docs"
-  text: "Documentation of Azimuth, a minecraft mod library designed to extend the accessibility and capability of create's systems."
-  tagline: My great project tagline
+  text: ""
+  tagline: Documentation of Azimuth, a minecraft mod library designed to extend the accessibility and capability of create's systems. Primarially for use with mods developed by Aztech group.
   actions:
     - theme: brand
       text: Markdown Examples
