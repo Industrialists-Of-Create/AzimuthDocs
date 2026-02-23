@@ -3,8 +3,8 @@
 layout: home
 
 hero:
-  name: "Ferret Docs"
-  text: "Documentation of ferret"
+  name: "Azimuth Docs"
+  text: "Documentation of Azimuth, a minecraft mod library designed to extend the accessibility and capability of create's systems."
   tagline: My great project tagline
   actions:
     - theme: brand
