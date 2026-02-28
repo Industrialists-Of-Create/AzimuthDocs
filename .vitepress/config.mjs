@@ -146,5 +146,5 @@ export default defineConfig({
     ]
   },
   srcDir: 'docs',
-  base: "/AzimuthDocs/",
+  base: "/",
 })
