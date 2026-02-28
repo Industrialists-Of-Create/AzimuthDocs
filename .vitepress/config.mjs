@@ -120,7 +120,7 @@ function buildSidebar() {
   }
 
   // Prepend a home link
-  sidebar.unshift({ text: 'home', link: '/azimuth' });
+  sidebar.unshift({ text: 'home', link: '/' });
   return sidebar;
 }
 
@@ -132,17 +132,17 @@ function basenameWithoutExt(fullPath) {
 const sidebar = buildSidebar();
 
 export default defineConfig({
-  title: "Azimuth Docs",
+  title: "Azimuth",
   description: "Documentation of the Azimuth library",
   themeConfig: {
     nav: [
-      { text: 'home', link: '/azimuth' },
+      { text: 'home', link: '/' },
     ],
 
     sidebar: sidebar,
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/vuejs/vitepress' }
+      { icon: 'github', link: 'https://github.com/Industrialists-Of-Create/AzimuthDocs' }
     ]
   },
   srcDir: 'docs',

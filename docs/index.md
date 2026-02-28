@@ -1,25 +1,30 @@
----
+﻿---
 # https://vitepress.dev/reference/default-theme-home-page
 layout: home
 
 hero:
-  name: "Azimuth Docs"
+  name: "Azimuth"
   text: ""
-  tagline: Documentation of Azimuth, a minecraft mod library designed to extend the accessibility and capability of create's systems. Primarially for use with mods developed by Aztech group.
+  tagline: Create addon library focused on extending capabilities and improving accessibility
   actions:
     - theme: brand
-      text: Markdown Examples
-      link: /markdown-examples
+      text: Get Started
+      link: /Getting Started
     - theme: alt
-      text: API Examples
-      link: /api-examples
+      text: Super Behaviours
+      link: /Super Behaviours/Super Behaviours
+    - theme: alt
+      text: Advancements
+      link: /Advancements/Advancements
 
 features:
   - title: Super Block Entity Behaviours
-    details: Add new systems with full compatability with other mods
-  - title: Feature B
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+    details: Compose (or inject) functionality like never before full tick lifecycle, rendering, kinetics, and schematic support, all in one behaviour.
+    link: /Super Behaviours/Super Behaviours
+  - title: Easy Advancements
+    details: Take advantage of an exposed Create-style advancement system that's open to all mods. Define, award, and track advancements without touching the internals.
+    link: /Advancements/Advancements
+  - title: Outlines
+    details: Additional outline types that prove useful for ponders including animated expanding lines with ease-out curves built in.
+    link: /Outlines/Outlines
 ---
-
