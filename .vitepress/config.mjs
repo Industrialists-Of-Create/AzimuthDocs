@@ -84,14 +84,27 @@ function buildSidebar() {
       // skip root index (home) at top level
       if (relPath === '' && name === 'index') continue;
 
-      // compute link
+      // compute link (encode each segment to avoid spaces causing Invalid URL)
       let link;
       if (name === 'index') {
         // directory index becomes the path to folder
-        link = `/${relPath}/`.replace(/\\/g, '/');
+        // encode each part of relPath separately
+        if (relPath) {
+          const parts = relPath.split('/').map(encodeURIComponent);
+          link = `/${parts.join('/')}/`;
+        } else {
+          link = `/`;
+        }
       } else {
-        link = `/${relPath}/${name}`.replace(/\\/g, '/');
+        if (relPath) {
+          const parts = relPath.split('/').map(encodeURIComponent);
+          parts.push(encodeURIComponent(name));
+          link = `/${parts.join('/')}`;
+        } else {
+          link = `/${encodeURIComponent(name)}`;
+        }
       }
+      link = link.replace(/\\/g, '/');
       items.push({ text: name, link });
     }
 
