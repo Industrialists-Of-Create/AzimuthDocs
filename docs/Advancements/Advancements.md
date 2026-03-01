@@ -25,8 +25,8 @@ public class MyAdvancements {
         .icon(MyItems.MY_ITEM)
         .title("My Mod")
         .description("Get started with My Mod.")
-        .after(() -> AllAdvancements.ROOT) // display inside the Create tab omit to create a new advancement tab
-        .awardedForFree()                  // immediately award when the player first joins
+        .after(() -> AllAdvancements.ROOT) // display inside the Create tab as a descendant of create's root, omit this to create a new tab
+        .awardedForFree()                  // immediately award when the player first joins, important for advancement tabs
         .special(AzimuthAdvancement.TaskType.SILENT)
     );
 
@@ -128,7 +128,6 @@ If you want the advancement to be awarded by a game event (rather than manually)
 
 If none of these are called, a built-in `SimpleCreateTrigger` is created automatically. You can then award the advancement manually (see below).
 
-
 ## Awarding advancements manually
 
 If the advancement uses the built-in trigger (no `.whenX` call), award it directly:
@@ -146,7 +145,6 @@ if (!MyAdvancements.FIRST_CRAFT.isAlreadyAwardedTo(player)) {
 ```
 
 `awardTo` will throw `UnsupportedOperationException` if the advancement uses an external trigger.
-
 
 ## `AzimuthAdvancementBehaviour`
 
@@ -167,7 +165,7 @@ Using the static `create` method (rather than constructing directly) means that 
 
 ### Tracking the player
 
-Call `setPlacedBy` from your block's `setPlacedBy` override to register the player who placed it:
+Call `setPlacedBy` from your block's `setPlacedBy` override, that way your block will register the player who placed it:
 
 ```java
 @Override

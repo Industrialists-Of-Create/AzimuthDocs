@@ -2,7 +2,7 @@
 
 `RenderedBehaviourExtension` lets a behaviour contribute rendering output alongside the block entity it's attached to. There are two rendering paths available: a standard Block Entity Renderer (BER) that works unconditionally, and an optional Flywheel visual for hardware-accelerated rendering. You can use either path or both together.
 
-For an overview of all extensions, see [Super Block Entity Behaviours](./Super Behaviours.md#extensions).
+For an overview of all extensions, see [Super Block Entity Behaviours](../Super%20Behaviours.md#extensions).
 
 ## Implementing
 

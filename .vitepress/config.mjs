@@ -63,63 +63,53 @@ try {
   console.error('generateHiddenProxies error:', e);
 }
 
-// Build the sidebar auto-dynamically by top-level folders in `docs`
+// Build the sidebar auto-dynamically by walking the `docs` tree recursively
 function buildSidebar() {
-  const entries = readdirSync(docsDir, { withFileTypes: true });
-  const sidebar = [];
+  // recursive helper: return array of sidebar items for a directory
+  function walk(dir, relPath = '') {
+    const entries = readdirSync(dir, { withFileTypes: true });
+    const items = [];
 
-  // Include top-level pages (root .md files other than index.md)
-  const rootFiles = entries
-    .filter(e => e.isFile() && e.name.endsWith('.md'))
-    .map(e => join(docsDir, e.name));
-
-  const rootItems = rootFiles
-    .map(full => {
-      // Exclude .hidden.md and generated proxies
-      if (full.endsWith('.hidden.md')) return null;
+    // first process files
+    for (const e of entries) {
+      if (!e.isFile() || !e.name.endsWith('.md')) continue;
+      const full = join(dir, e.name);
+      // skip hidden and proxies
+      if (full.endsWith('.hidden.md')) continue;
       try {
         const content = readFileSync(full, 'utf8');
-        if (content.includes(PROXY_MARKER)) return null;
-      } catch (e) {}
+        if (content.includes(PROXY_MARKER)) continue;
+      } catch (err) {}
       const name = basenameWithoutExt(full);
-      // Skip index.md (home) unless it's desired
-      if (name === 'index') return null;
-      return { text: name, link: `/${name}` };
-    })
-    .filter(Boolean);
+      // skip root index (home) at top level
+      if (relPath === '' && name === 'index') continue;
 
-  if (rootItems.length) {
-    sidebar.push({ text: 'root', items: rootItems });
+      // compute link
+      let link;
+      if (name === 'index') {
+        // directory index becomes the path to folder
+        link = `/${relPath}/`.replace(/\\/g, '/');
+      } else {
+        link = `/${relPath}/${name}`.replace(/\\/g, '/');
+      }
+      items.push({ text: name, link });
+    }
+
+    // then process subdirectories
+    for (const e of entries) {
+      if (!e.isDirectory()) continue;
+      const subdir = e.name;
+      const childItems = walk(join(dir, subdir), relPath ? `${relPath}/${subdir}` : subdir);
+      if (childItems.length) {
+        items.push({ text: subdir, items: childItems });
+      }
+    }
+
+    return items;
   }
 
-  // For each top-level folder, collect its markdown files (non-hidden, non-proxy)
-  for (const e of entries) {
-    if (!e.isDirectory()) continue;
-    const folderPath = join(docsDir, e.name);
-    const files = readdirSync(folderPath, { withFileTypes: true })
-      .filter(f => f.isFile() && f.name.endsWith('.md'))
-      .map(f => join(folderPath, f.name))
-      .filter(full => {
-        if (full.endsWith('.hidden.md')) return false;
-        try {
-          const content = readFileSync(full, 'utf8');
-          if (content.includes(PROXY_MARKER)) return false;
-        } catch (err) {}
-        return true;
-      });
-
-    if (!files.length) continue;
-    const items = files.map(full => {
-      const name = basenameWithoutExt(full);
-      // link should be /folder/name (strip any index specialness)
-      const linkName = name === 'index' ? `/${e.name}/` : `/${e.name}/${name}`;
-      return { text: name, link: linkName };
-    });
-
-    sidebar.push({ text: e.name, items });
-  }
-
-  // Prepend a home link
+  const sidebar = walk(docsDir);
+  // ensure home link is first
   sidebar.unshift({ text: 'home', link: '/' });
   return sidebar;
 }

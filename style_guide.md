@@ -18,9 +18,10 @@ docs/
   Super Behaviours/
     Super Behaviours.md
     Extension Reference.md
-    Kinetic Extension.md
-    Rendered Extension.md
-    Item Requirement Extension.md
+    Extensions/
+      Kinetic Extension.md
+      Rendered Extension.md
+      Item Requirement Extension.md
   Advancements/
     Advancements.md
   Outlines/
@@ -63,7 +64,7 @@ PROVIDER.create("my_advancement", b -> b
     .icon(MyItems.MY_ITEM)
     .title("My Title")
     .description("My description.")
-    .after(() -> AllAdvancements.ROOT) // display inside the Create tab omit to create a new tab
+    .after(() -> AllAdvancements.ROOT) // display inside the Create tab, omit this to create a new tab
     .awardedForFree()
 );
 ```
@@ -89,19 +90,17 @@ For things that are easy to mess up or have non-obvious caveats, use a blockquot
 
 Keep them short. One sentence or two.
 
-
 ## Internal links
 
 Link targets use relative paths and include the `.md` extension:
 
 ```markdown
-[Super Block Entity Behaviours](./Super Behaviours/Super Behaviours.md)
-[Kinetic Extension](./Kinetic Extension.md)
-[back to overview](./Super Behaviours.md#extensions)
+[Super Block Entity Behaviours](./Super%20Behaviours/Super%20Behaviours.md)
+[Kinetic Extension](./docs/Super%20Behaviours/Extensions/Kinetic%20Extension.md)
+[back to overview](./Super%20Behaviours.md#extensions)
 ```
 
 For anchor fragments, use lowercase with hyphens (VitePress converts `## Extensions` `#extensions`).
-
 
 ## What to avoid
 

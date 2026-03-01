@@ -2,7 +2,7 @@
 
 `ItemRequirementBehaviourExtension` lets a behaviour contribute item requirements to Create's schematic placement flow. Implement this if your behaviour places or represents items that should be listed when a player is deploying a schematic containing this block.
 
-For an overview of all extensions, see [Super Block Entity Behaviours](./Super Behaviours.md#extensions).
+For an overview of all extensions, see [Super Block Entity Behaviours](../Super%20Behaviours.md#extensions).
 
 ## Implementing
 

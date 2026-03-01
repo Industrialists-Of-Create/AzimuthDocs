@@ -16,7 +16,6 @@ outline
 
 Call `tickGrowingTicksElapsed()` each tick to advance the animation. Once elapsed reaches `growingTicks`, the outline stays at full size.
 
-
 ## `ExpandingLineOutlineInstruction`
 
 A ready-to-use Ponder `TickingInstruction` that wraps `ExpandingLineOutline`. Just add it to your scene and it handles everything.

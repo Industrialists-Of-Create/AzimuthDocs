@@ -31,7 +31,7 @@ Azimuth doesn't require any explicit initialisation on your part just depend on 
 
 An expanded version of Create's `BlockEntityBehaviour` that can do significantly more, in effort to replicate features that would typically take new block entity types. All of which is composable on a single `SmartBlockEntity`. You can also *inject* behaviours onto block entities you don't own, without touching their source, making simple soft-compatability easy.
 
-[Super Block Entity Behaviours](./Super Behaviours/Super Behaviours.md)
+[Super Block Entity Behaviours](./Super%20Behaviours/Super%20Behaviours.md)
 
 ### Advancements
 

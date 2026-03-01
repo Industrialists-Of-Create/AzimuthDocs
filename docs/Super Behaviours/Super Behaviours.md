@@ -151,6 +151,6 @@ Behaviours can implement extension interfaces to opt into additional systems kin
 
 | Extension | Description |
 | --- | --- |
-| [`KineticBehaviourExtension`](./Kinetic Extension.md) | Adds propagation positions and rotation transfer overrides for kinetic networks. |
-| [`RenderedBehaviourExtension`](./Rendered Extension.md) | Adds behaviour-level BER rendering, optional Flywheel visuals, and optional render bounds expansion. |
-| [`ItemRequirementBehaviourExtension`](./Item Requirement Extension.md) | Adds per-behaviour item requirements to schematic requirement flows. |
+| [`KineticBehaviourExtension`](./Extensions/Kinetic%20Extension.md) | Adds propagation positions and rotation transfer overrides for kinetic networks. |
+| [`RenderedBehaviourExtension`](./Extensions/Rendered%20Extension.md) | Adds behaviour-level BER rendering, optional Flywheel visuals, and optional render bounds expansion. |
+| [`ItemRequirementBehaviourExtension`](./Extensions/Item%20Requirement%20Extension.md) | Adds per-behaviour item requirements to schematic requirement flows. |

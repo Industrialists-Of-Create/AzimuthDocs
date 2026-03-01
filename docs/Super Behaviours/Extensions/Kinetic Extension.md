@@ -2,7 +2,7 @@
 
 `KineticBehaviourExtension` lets a behaviour participate in kinetic propagation adding extra neighbour positions and overriding the speed that gets propagated. It assumes the block entity this behaviour is attached to is a `KineticBlockEntity`.
 
-For an overview of all extensions, see [Super Block Entity Behaviours](./Super Behaviours.md#extensions).
+For an overview of all extensions, see [Super Block Entity Behaviours](../Super%20Behaviours.md#extensions).
 
 ## Implementing
 
