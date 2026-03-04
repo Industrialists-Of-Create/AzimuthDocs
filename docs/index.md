@@ -24,7 +24,7 @@ features:
   - title: Easy Advancements
     details: Take advantage of an exposed Create-style advancement system that's open to all mods. Define, award, and track advancements without touching the internals.
     link: /Advancements/Advancements
-  - title: Outlines
-    details: Additional outline types that prove useful for ponders including animated expanding lines with ease-out curves built in.
-    link: /Outlines/Outlines
+  - title: Goggle API Builder
+    details: Build Create goggle tooltips declaratively with sections, labels, statistics, conditional branches, style builders, and automatic language key collection.
+    link: /Goggle API/Goggle API
 ---
