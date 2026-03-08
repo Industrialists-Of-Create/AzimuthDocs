@@ -1,20 +1,19 @@
-﻿# Super Block Entity Behaviours
+# Super Block Entity Behaviours
 
-`SuperBlockEntityBehaviours` are components for `SmartBlockEntities` (the basis of all Create block entities), that enable far more capabilities than a standard `BlockEntityBehaviour`.
-
-These are (ideally) able to do anything a normal block entity can do full tick lifecycle, rendering, kinetic hooks, schematic requirements all packaged up into a single behaviour you can attach anywhere.
+`SuperBlockEntityBehaviour` extends Create's `BlockEntityBehaviour` with a fuller lifecycle, extra interaction hooks, typed lookup helpers, and extension interfaces for rendering, kinetics, and schematic requirements.
 
 ## Creating a behaviour
 
-Extend `SuperBlockEntityBehaviour` the same way you would a regular `BlockEntityBehaviour`:
+Extend `SuperBlockEntityBehaviour` the same way a regular `BlockEntityBehaviour` would be extended. The usual Create lifecycle methods such as `initialize()`, `tick()`, `lazyTick()`, and `destroy()` are inherited, so only the ones that matter need to be overridden:
 
 ```java
 public class MyCustomBehaviour extends SuperBlockEntityBehaviour {
 
     public static final BehaviourType<MyCustomBehaviour> TYPE = new BehaviourType<>();
 
-    public MyCustomBehaviour(SmartBlockEntity be) {
+    public MyCustomBehaviour(final SmartBlockEntity be) {
         super(be);
+        setLazyTickRate(5);
     }
 
     @Override
@@ -25,13 +24,21 @@ public class MyCustomBehaviour extends SuperBlockEntityBehaviour {
     @Override
     public void initialize() {
         super.initialize();
-        // called once after the block entity is placed and valid
+        // called once after the block entity becomes valid
     }
 
     @Override
     public void tick() {
-        if (isClientLevel()) return;
-        // server tick logic
+        if (!hasLevel() || isClientLevel()) {
+            return;
+        }
+        // per-tick server logic
+    }
+
+    @Override
+    public void lazyTick() {
+        super.lazyTick();
+        // cheaper work on a slower cadence
     }
 
     @Override
@@ -45,15 +52,42 @@ Then register it in the block entity's `addBehaviours` override as usual:
 
 ```java
 @Override
-public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
+public void addBehaviours(final List<BlockEntityBehaviour> behaviours) {
     super.addBehaviours(behaviours);
     behaviours.add(new MyCustomBehaviour(this));
 }
 ```
 
+## Tick cadence
+
+### `tick()`
+
+Runs every tick while the owning block entity is active. Use this for logic that cannot wait.
+
+### `lazyTick()` and `setLazyTickRate(...)`
+
+Use `setLazyTickRate(...)` when work only needs to happen periodically. For example, `Create: Bits 'n' Bobs` uses this pattern for cogwheel chain integrity checks and client-side shape refreshes:
+
+```java
+public CogwheelChainBehaviour(final SmartBlockEntity be) {
+    super(be);
+    setLazyTickRate(5);
+}
+
+@Override
+public void lazyTick() {
+    super.lazyTick();
+    if (isClientLevel()) {
+        updateChainShapes();
+        return;
+    }
+    validateControllerState();
+}
+```
+
 ## Convenience helpers
 
-`SuperBlockEntityBehaviour` bundles a few shorthand accessors so you don't have to reach into `blockEntity` everywhere:
+The standard Create helpers such as `getPos()` and the lazy-tick methods still exist. `SuperBlockEntityBehaviour` adds a few extra shorthands so repeated block entity plumbing stays out of the way:
 
 | Method | Description |
 | --- | --- |
@@ -61,15 +95,16 @@ public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
 | `getBlockState()` | Returns the current `BlockState` at this position. |
 | `getBlockEntity()` | Returns the owning `BlockEntity`. |
 | `hasLevel()` | Returns `true` if the level is non-null. |
-| `isClientLevel()` | Returns `true` if running on the client (Should be preceeded by a hasLevel check) |
-| `isServerLevel()` | Returns `true` if running on the server (Should be preceeded by a hasLevel check) |
+| `isClientLevel()` | Returns `true` if running on the client. Check `hasLevel()` first. |
+| `isServerLevel()` | Returns `true` if running on the server. Check `hasLevel()` first. |
 | `sendData()` | Syncs the owning block entity to clients. |
+| `transform(BlockEntity, StructureTransform)` | Override to respond to schematic transforms. |
 
 ## Getting behaviours from other block entities
 
-`SuperBlockEntityBehaviour` adds several typed helpers for looking up behaviours at arbitrary positions useful for multi-blocks, linked machines, etc.
+`SuperBlockEntityBehaviour` adds typed helpers for looking up behaviours at arbitrary positions. This is useful for multi-blocks, linked machines, and controller/sub-part relationships.
 
-### From a level + position
+### From a level and position
 
 ```java
 // Returns Optional<T>, empty if not found or not loaded
@@ -88,7 +123,7 @@ MyCustomBehaviour behaviour = SuperBlockEntityBehaviour.getOrThrow(otherBE, MyCu
 
 ### Getting the same behaviour type at another position
 
-This is the pattern for multi-blocks getting the matching behaviour from the controller or a sub-part:
+This is the usual multi-block pattern for grabbing the matching behaviour from a controller or sibling part:
 
 ```java
 // Nullable
@@ -104,35 +139,99 @@ MyCustomBehaviour ctrl = this.getSameBehaviourOrThrow(controllerPos);
 
 All three variants also accept a `BlockEntity` directly instead of a `BlockPos`.
 
-## Block break hook
-
-Override `onBlockBroken` to react to the block being broken by a player (fired by NeoForge's `BlockEvent.BreakEvent`), useful for removing drops if the player is in creative:
+A real controller lookup often looks like this:
 
 ```java
-@Override
-public void onBlockBroken(BlockEvent.BreakEvent event) {
-    // handle drops, cleanup, etc.
+if (!isController() && controllerOffset != null && getLevel() != null) {
+    final BlockPos controllerPos = getPos().offset(controllerOffset);
+    this.<CogwheelChainBehaviour>getSameBehaviourOptional(controllerPos)
+        .ifPresent(controller -> {
+            if (!controller.isInSameChain(this)) {
+                destroyForInvalidShape();
+            }
+        });
 }
 ```
 
+## Interaction hooks
+
+Azimuth forwards a few common NeoForge block interaction events directly into behaviours.
+
+### `onBlockBroken(BlockEvent.BreakEvent event)`
+
+Override this to react when the block is broken by a player:
+
+```java
+@Override
+public void onBlockBroken(final BlockEvent.BreakEvent event) {
+    // handle drops, cleanup, refund items, and so on
+}
+```
+
+### `onItemUse(PlayerInteractEvent.RightClickBlock event)`
+
+Override this to react to right-click interactions on the owning block entity. This is the pattern used by the dyeable pipes in `Create: Bits 'n' Bobs`. For example, adding dye application behavior on top of the normal pipe interactions:
+
+```java
+@Override
+public void onItemUse(final PlayerInteractEvent.RightClickBlock event) {
+    if (!(event.getItemStack().getItem() instanceof final DyeItem dyeItem)) {
+        return;
+    }
+
+    if (!event.getLevel().isClientSide) {
+        applyColor(dyeItem.getDyeColor());
+    }
+
+    //Since we just get passed an event object, you just use cancelling and cancel results like normal
+    event.setCanceled(true);
+    event.setCancellationResult(InteractionResult.SUCCESS);
+}
+```
+
+### `onBlockPlaced(BlockEvent.EntityPlaceEvent event)`
+
+Override this to react once the block has been placed and the block entity exists. This is a good place to pull setup state from the placing entity or held item:
+
+```java
+@Override
+public void onBlockPlaced(final BlockEvent.EntityPlaceEvent event) {
+    if (event.getLevel().isClientSide()) {
+        return;
+    }
+    if (!(event.getEntity() instanceof final Player player)) {
+        return;
+    }
+
+    final ItemStack offhand = player.getOffhandItem();
+    if (offhand.getItem() instanceof final DyeItem dyeItem) {
+        applyColor(dyeItem.getDyeColor());
+    }
+}
+```
+
+If an interaction event is cancelled, Azimuth stops passing that event to later super behaviours on the same block entity.
+
 ## Using behaviour applicators
 
-`BehaviourApplicators` is how you inject behaviours onto block entities you don't own no subclassing or mixins required.
+`BehaviourApplicators` injects behaviours onto block entities that are not owned by the mod. No subclassing or mixins are required.
 
 ### Global applicator
 
-Registers a function that runs for *every* `SmartBlockEntity` when it collects its behaviours. Return `null` or an empty list to skip the entity:
+Registers a function that runs for every `SmartBlockEntity` when it collects its behaviours. Return `null` or an empty list to skip the entity:
 
 ```java
 BehaviourApplicators.register(be -> {
-    if (!(be instanceof MySpecificBlockEntity myBE)) return null;
+    if (!(be instanceof MySpecificBlockEntity myBE)) {
+        return null;
+    }
     return List.of(new MyCustomBehaviour(myBE));
 });
 ```
 
 ### Type-specific applicator
 
-If you only care about one block entity type, use `registerForType` to avoid the overhead of checking every entity:
+If only one block entity type matters, use `registerForType(...)` to avoid checking every entity:
 
 ```java
 BehaviourApplicators.registerForType(
@@ -141,13 +240,22 @@ BehaviourApplicators.registerForType(
 );
 ```
 
-Type suppliers are resolved lazily, so it's safe to call this during mod construction before your registries are finalised.
+### Resolving deferred registrations
 
-> **Note:** `BehaviourApplicators` only works because Azimuth's mixins hook into `SmartBlockEntity`. Behaviours injected this way participate in the normal behaviour lifecycle (tick, initialize, destroy, etc.) exactly as if they'd been added from inside the block entity.
+Lazy resolution also happens on first use, but to help with debugging and error attribution, you can call resolve(), which will collapse all of the unregistered applicators, and throw necassary exceptions. For example, `Create: Bits 'n' Bobs` calls this during common setup:
+
+```java
+private static void commonSetup(final FMLCommonSetupEvent event) {
+    BehaviourApplicators.resolveRegisteredTypes();
+    VisualWrapperInterest.resolve(); // only needed for Flywheel visuals
+}
+```
+
+`VisualWrapperInterest.resolve()` only matters for `RenderedBehaviourExtension` visuals created through `getVisualFactory()`. For the rendering side of that setup, see [RenderedBehaviourExtension](./Extensions/Rendered%20Extension.md).
 
 ## Extensions
 
-Behaviours can implement extension interfaces to opt into additional systems kinetics, rendering, schematic requirements. Extensions are checked by cached lookups, so only behaviours that actually implement a given extension incur any cost at all.
+Behaviours can implement extension interfaces to opt into additional systems. Extension lookups are cached, so only behaviours that actually implement a given extension pay the cost.
 
 | Extension | Description |
 | --- | --- |
