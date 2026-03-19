@@ -74,3 +74,9 @@ A declarative builder for Create goggle tooltips, including labels, statistics, 
 Extra outline types built on top of Catnip's outliner. Particularly handy for ponders.
 
 [Outlines](./Outlines/Outlines.md)
+
+### New Ponder Tooltip
+
+A gold **(New!)** badge on item tooltips in the ponder progress bar when unwatched tutorial scenes exist for that item.
+
+[New Ponder Tooltip](./New%20Ponder%20Tooltip.md)
