@@ -80,3 +80,9 @@ Extra outline types built on top of Catnip's outliner. Particularly handy for po
 A gold **(New!)** badge on item tooltips in the ponder progress bar when unwatched tutorial scenes exist for that item.
 
 [New Ponder Tooltip](./New%20Ponder%20Tooltip.md)
+
+### Foreign Ponder Labels
+
+A microfont attribution label next to ponder scene titles when a mod injects scenes into another mod's items. Includes automatic fallback to Minecraft's font for non-Latin characters.
+
+[Foreign Ponder Labels](./Foreign%20Ponder%20Labels.md)
