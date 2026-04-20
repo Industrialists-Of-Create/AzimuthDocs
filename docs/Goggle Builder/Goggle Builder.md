@@ -1,6 +1,6 @@
-# Goggle API
+# Goggle Builder
 
-Azimuth provides a declarative API for Create goggle overlays via `IBuildGoggleInformation` and `GoggleBuilder`.
+Azimuth provides a declarative builder for Create goggle overlays via `IBuildGoggleInformation` and `GoggleBuilder`.
 
 ## Core Flow
 

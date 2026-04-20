@@ -145,7 +145,7 @@ export default defineConfig({
     sidebar: sidebar,
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/Industrialists-Of-Create/AzimuthDocs' }
+      { icon: 'github', link: 'https://github.com/Industrialists-Of-Create/Azimuth' }
     ]
   },
   srcDir: 'docs',
