@@ -14,8 +14,8 @@ hero:
       text: Super Behaviours
       link: /Super Behaviours/Super Behaviours
     - theme: alt
-      text: Create Block Edits
-      link: /Create Block Edits
+      text: Include Lang Defaults
+      link: /Include Lang Defaults
     - theme: alt
       text: Advancements
       link: /Advancements/Advancements
@@ -24,13 +24,13 @@ features:
   - title: Super Block Entity Behaviours
     details: Compose or inject full behaviour lifecycles, interaction hooks, rendering, kinetics, and schematic support onto Create block entities.
     link: /Super Behaviours/Super Behaviours
-  - title: Create Block Edits
-    details: Soft-mod Create's own block registrations by applying builder edits or swapping generated block items during AllBlocks bootstrap.
-    link: /Create Block Edits
+  - title: Include Lang Defaults
+    details: Co-locate translation keys with your code using annotations. Mod ID auto-detection, class and method targeting, and automatic datagen collection.
+    link: /Include Lang Defaults
   - title: Easy Advancements
     details: Take advantage of an exposed Create-style advancement system that's open to all mods. Define, award, and track advancements without touching the internals.
     link: /Advancements/Advancements
-  - title: Goggle API Builder
+  - title: Goggle Builder
     details: Build Create goggle tooltips declaratively with sections, labels, statistics, conditional branches, style builders, and automatic language key collection.
-    link: /Goggle API/Goggle API
+    link: /Goggle Builder/Goggle Builder
 ---

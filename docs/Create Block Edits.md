@@ -4,7 +4,7 @@
 
 ## Registering edits
 
-Declare a public static no-arg method, annotate it with `@CreateBlockEdits.Registrator`, and register edits inside it:
+Due to the required timing of editing registrations, you will have ot declare a public static no-arg method, annotate it with `@CreateBlockEdits.Registrator`, and register edits inside it:
 
 ```java
 public class MyCreateBlockEdits {
@@ -64,6 +64,8 @@ Multiple edits for the same id are merged and run in registration order. This ma
 ## `forBlockItem(...)`
 
 `forBlockItem(...)` replaces the generated item factory for a Create block, generally for when blocks dont have an explicit item themselves.
+
+> Consider whether you can use events before using an explicit item
 
 ```java
 CreateBlockEdits.forBlockItem("fluid_pipe", MyDyeablePipeBlockItem::new);

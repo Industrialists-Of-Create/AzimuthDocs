@@ -5,7 +5,7 @@ Azimuth provides a declarative builder for Create goggle overlays via `IBuildGog
 ## Core Flow
 
 1. Implement `IBuildGoggleInformation` on your Block Entity.
-2. Return your mod id from `getModId()`.
+2. Mod ID is auto-detected from your implementing class's package. Override `getModId()` if you need a different value.
 3. Build tooltip structure in `buildGoggleStructure(GoggleBuilder builder)`.
 
 ## Components
@@ -23,7 +23,7 @@ Use `GoggleBuilderHelper` for reusable keys:
 - `section(...)`
 - `label(...)`
 - `statistic(...)`
-- `conditional(...)`, `isSneaking()`, `isNotSneaking()`
+- `conditional(...)`, `isSneaking()`, `isNotSneaking()`, `endConditional()`
 
 Styling chain hierarchy:
 
@@ -36,10 +36,22 @@ Styling chain hierarchy:
 Azimuth includes presets:
 
 - `CreateGoggleStyles` (`SU`, `RPM`, `MB`)
-- `AzimuthGoggleStyles` (`CUG_GRAM`, `CUG_GRAM_M2`, `CUG_GRAM_M3`, `BAR_UNIT`, and chart presets)
+- `AzimuthGoggleStyles` (`CUG_GRAM`, `CUG_GRAM_M2`, `CUG_GRAM_M3`, `PINK_BAR`, `RED_GREEN_BAR`, `BLUE_BAR`)
 
 ## Datagen
 
-The language registry collects keys through datagen scan and writes discovered tooltip entries.
+The language registry collects keys through datagen scan and writes discovered tooltip entries. For these keys to actually be written to lang files, `AzimuthGeneratedLangProvider` must be registered in datagen:
+
+```java
+@SubscribeEvent
+public static void gatherData(final GatherDataEvent event) {
+    event.getGenerator().addProvider(
+            event.includeClient(),
+            new AzimuthGeneratedLangProvider(event.getGenerator().getPackOutput())
+    );
+}
+```
+
+> See [Getting Started — Datagen](../Getting%20Started.md#datagen) for full context.
 
 A reference test implementation is available in Azimuth's `testmod` project with `MagicTankBlockEntity` and datagen verification provider.

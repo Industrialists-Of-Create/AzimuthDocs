@@ -240,19 +240,6 @@ BehaviourApplicators.registerForType(
 );
 ```
 
-### Resolving deferred registrations
-
-Lazy resolution also happens on first use, but to help with debugging and error attribution, you can call resolve(), which will collapse all of the unregistered applicators, and throw necassary exceptions. For example, `Create: Bits 'n' Bobs` calls this during common setup:
-
-```java
-private static void commonSetup(final FMLCommonSetupEvent event) {
-    BehaviourApplicators.resolveRegisteredTypes();
-    VisualWrapperInterest.resolve(); // only needed for Flywheel visuals
-}
-```
-
-`VisualWrapperInterest.resolve()` only matters for `RenderedBehaviourExtension` visuals created through `getVisualFactory()`. For the rendering side of that setup, see [RenderedBehaviourExtension](./Extensions/Rendered%20Extension.md).
-
 ## Extensions
 
 Behaviours can implement extension interfaces to opt into additional systems. Extension lookups are cached, so only behaviours that actually implement a given extension pay the cost.

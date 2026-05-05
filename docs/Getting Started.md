@@ -25,25 +25,31 @@ It may also be necessary to declare Azimuth as a required dependency in `neoforg
 
 Most Azimuth APIs are ready as soon as the dependency is present. The one setup pattern worth knowing is behaviour and visual registration.
 
-## Recommended common setup
+## Datagen
 
-If a mod registers type-specific behaviour applicators or Flywheel visual interest predicates, resolve them during common setup once the registries exist:
+Azimuth uses `AzimuthGeneratedLangProvider` to write all collected lang entries to lang files at datagen time. This covers keys declared via [`@IncludeLangDefaults`](./Include%20Lang%20Defaults.md) annotations and keys registered through the [Goggle Builder](./Goggle%20Builder/Goggle%20Builder.md)'s `component()` helper.
+
+Any mod that uses either of these features needs to add the provider to its datagen:
 
 ```java
-public MyMod(final IEventBus modEventBus) {
-    MyBehaviourApplicators.register();
-    modEventBus.addListener(MyMod::commonSetup);
-}
-
-private static void commonSetup(final FMLCommonSetupEvent event) {
-    BehaviourApplicators.resolveRegisteredTypes();
-    VisualWrapperInterest.resolve();
+@SubscribeEvent
+public static void gatherData(final GatherDataEvent event) {
+    event.getGenerator().addProvider(
+            event.includeClient(),
+            new AzimuthGeneratedLangProvider(event.getGenerator().getPackOutput())
+    );
 }
 ```
 
-`BehaviourApplicators.resolveRegisteredTypes()` is relevant for `registerForType(...)` suppliers. `VisualWrapperInterest.resolve()` is only relevant for `RenderedBehaviourExtension` visuals created through `getVisualFactory()`. Plain BER rendering does not need it.
+> Without this provider, lang keys defined via annotations or the goggle builder won't be written to lang files.
 
 ## What's available
+
+### Include Lang Defaults
+
+An annotation-driven system for co-locating translation keys with the code that uses them. Place `@IncludeLangDefaults` on any class or method, declare the key and its English default inline, and Azimuth collects everything automatically at datagen time — no monolithic lang provider needed. Mod ID is auto-detected from the classpath.
+
+[Include Lang Defaults](./Include%20Lang%20Defaults.md)
 
 ### Super Block Entity Behaviours
 
@@ -63,11 +69,11 @@ A thin wrapper around Create's internal advancement machinery. Define advancemen
 
 [Advancements](./Advancements/Advancements.md)
 
-### Goggle API
+### Goggle Builder
 
 A declarative builder for Create goggle tooltips, including labels, statistics, preset styles, and language key collection for datagen.
 
-[Goggle API](./Goggle%20API/Goggle%20API.md)
+[Goggle Builder](./Goggle%20Builder/Goggle%20Builder.md)
 
 ### Outlines
 
@@ -86,3 +92,11 @@ A gold **(New!)** badge on item tooltips in the ponder progress bar when unwatch
 A microfont attribution label next to ponder scene titles when a mod injects scenes into another mod's items. Includes automatic fallback to Minecraft's font for non-Latin characters.
 
 [Foreign Ponder Labels](./Foreign%20Ponder%20Labels.md)
+
+## Debug Commands
+
+Azimuth registers client-side commands under `/azimuth` for development and debugging:
+
+- `/azimuth tooltip_debug <true|false>` — Toggles goggle tooltip builder debug info.
+- `/azimuth mod_package list` — Lists all detected mod IDs and their root packages (from `@Mod` annotation scanning).
+- `/azimuth mod_package get <mod_id>` — Shows the package and entry class for a specific mod ID.

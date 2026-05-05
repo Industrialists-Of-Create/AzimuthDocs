@@ -1,8 +1,6 @@
 # Foreign Ponder Labels
 
-When a mod injects ponder scenes into another mod's items, a small attribution label can appear next to the scene title — rendered in Azimuth's built-in microfont. Labels only show when the scene's namespace differs from the pondered item's namespace, so a mod's own scenes stay clean.
-
-![Foreign ponder label example](./img/foreign-ponder-label.png)
+When a mod injects ponder scenes into another mod's items, a small attribution label can appear next to the scene title, rendered in Azimuth's microfont. Labels only show when the scene's namespace differs from the pondered item's namespace, so a mod's own scenes stay clean.
 
 ## Registering a label
 

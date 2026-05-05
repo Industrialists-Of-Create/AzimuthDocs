@@ -9,33 +9,36 @@ A `LineOutline` that animates from its midpoint outward, expanding to full lengt
 ```java
 ExpandingLineOutline outline = new ExpandingLineOutline();
 outline
-    .set(start, end)            // Vec3 start and end points
     .setGrowingTicks(10)        // how many ticks the expansion takes
+    .set(start, end)            // Vec3 start and end points
     .setGrowingTicksElapsed(0); // tick counter increment each tick to drive the animation
 ```
 
 Call `tickGrowingTicksElapsed()` each tick to advance the animation. Once elapsed reaches `growingTicks`, the outline stays at full size.
 
-## `ExpandingLineOutlineInstruction`
+## `ExpandingOutlineInstruction`
 
-A ready-to-use Ponder `TickingInstruction` that wraps `ExpandingLineOutline`. Just add it to your scene and it handles everything.
+A ready-to-use Ponder `TickingInstruction` that wraps `ExpandingLineOutline`. Line width defaults to `1/16f` but can be configured via an optional constructor parameter.
 
 ```java
-scene.addInstruction(new ExpandingLineOutlineInstruction(
+scene.addInstruction(new ExpandingOutlineInstruction(
     PonderPalette.WHITE,         // color palette
     new Vec3(0.5, 1.0, 0.5),    // start point
     new Vec3(2.5, 1.0, 0.5),    // end point
     40,                          // total duration in ticks
-    10                           // growing ticks how long the expand animation takes
+    10                           // growing ticks — how long the expand animation takes
 ));
+```
 
-// Optionally specify line width (defaults to 1/16):
-scene.addInstruction(new ExpandingLineOutlineInstruction(
+To use a custom line width, pass it as the last argument:
+
+```java
+scene.addInstruction(new ExpandingOutlineInstruction(
     PonderPalette.WHITE,
     new Vec3(0.5, 1.0, 0.5),
     new Vec3(2.5, 1.0, 0.5),
     40,
     10,
-    1 / 8f                       // custom line width
+    1 / 8f                       // custom line width (default is 1/16f)
 ));
 ```
